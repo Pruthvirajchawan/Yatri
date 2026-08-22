@@ -47,13 +47,13 @@ const HERO_BACKGROUNDS: Record<string, { image: string; title: string; altitude:
     temp: '6°C'
   },
   gujarat: {
-    image: '/images/gujarat_somnath_bg.jpg',
+    image: '/images/gujarat_somnath_bg.jpg?v=2',
     title: 'Gujarat Sacred Shore (Somnath)',
     altitude: 'Prabhas Patan Coast',
     temp: '27°C'
   },
   kerala: {
-    image: '/images/kerala_bg.jpg',
+    image: '/images/kerala_bg.jpg?v=2',
     title: 'Kerala Backwaters & Hills',
     altitude: 'Vembanad & Munnar',
     temp: '26°C'
@@ -160,13 +160,13 @@ export const Home: React.FC = () => {
   const filteredDestinations = selectedCategory === 'All'
     ? INDIA_TOP_DESTINATIONS
     : INDIA_TOP_DESTINATIONS.filter((d) => {
-        if (selectedCategory === 'Heritage') return d.category === 'Heritage';
-        if (selectedCategory === 'Beaches & Backwaters') return d.category === 'Beaches' || d.category === 'Backwaters';
-        if (selectedCategory === 'Spiritual') return d.category === 'Spiritual';
-        if (selectedCategory === 'Wildlife') return d.category === 'Wildlife';
-        if (selectedCategory === 'Mountains') return d.category === 'Mountains';
-        return true;
-      });
+      if (selectedCategory === 'Heritage') return d.category === 'Heritage';
+      if (selectedCategory === 'Beaches & Backwaters') return d.category === 'Beaches' || d.category === 'Backwaters';
+      if (selectedCategory === 'Spiritual') return d.category === 'Spiritual';
+      if (selectedCategory === 'Wildlife') return d.category === 'Wildlife';
+      if (selectedCategory === 'Mountains') return d.category === 'Mountains';
+      return true;
+    });
 
   const categories = ['All', 'Heritage', 'Beaches & Backwaters', 'Spiritual', 'Wildlife', 'Mountains'];
 
@@ -182,36 +182,32 @@ export const Home: React.FC = () => {
           <img
             src={DEFAULT_HERO_INFO.image}
             alt="Incredible India Landscape"
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-110 saturate-110 ${
-              hoveredCapsuleId ? 'opacity-0 scale-105' : 'opacity-65 scale-100'
-            }`}
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-110 saturate-110 ${hoveredCapsuleId ? 'opacity-0 scale-105' : 'opacity-65 scale-100'
+              }`}
           />
 
           {/* Ladakh Hover Background */}
           <img
             src={HERO_BACKGROUNDS.ladakh.image}
             alt="Ladakh Mountain High Passes"
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-110 saturate-110 ${
-              hoveredCapsuleId === 'ladakh' ? 'opacity-85 scale-100' : 'opacity-0 scale-105'
-            }`}
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-110 saturate-110 ${hoveredCapsuleId === 'ladakh' ? 'opacity-85 scale-100' : 'opacity-0 scale-105'
+              }`}
           />
 
           {/* Gujarat Hover Background */}
           <img
             src={HERO_BACKGROUNDS.gujarat.image}
             alt="Gujarat Somnath Temple Sacred Coast"
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-105 saturate-110 ${
-              hoveredCapsuleId === 'gujarat' ? 'opacity-90 scale-100' : 'opacity-0 scale-105'
-            }`}
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-105 saturate-110 ${hoveredCapsuleId === 'gujarat' ? 'opacity-90 scale-100' : 'opacity-0 scale-105'
+              }`}
           />
 
           {/* Kerala Hover Background */}
           <img
             src={HERO_BACKGROUNDS.kerala.image}
             alt="Kerala Alleppey Backwaters and Houseboats"
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-105 saturate-115 ${
-              hoveredCapsuleId === 'kerala' ? 'opacity-90 scale-100' : 'opacity-0 scale-105'
-            }`}
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-105 saturate-115 ${hoveredCapsuleId === 'kerala' ? 'opacity-90 scale-100' : 'opacity-0 scale-105'
+              }`}
           />
 
           {/* Clean gradient overlay ensuring scenery is vibrant while text stays super crisp */}
@@ -426,11 +422,10 @@ export const Home: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                    selectedCategory === cat
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${selectedCategory === cat
                       ? 'bg-[#101827] text-white shadow-sm'
                       : 'bg-white text-[#64748B] border border-[#E2E8F0] hover:border-[#168BFF]/50 hover:text-[#101827]'
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -469,9 +464,8 @@ export const Home: React.FC = () => {
                       className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/70 hover:bg-white backdrop-blur-md flex items-center justify-center text-[#101827] shadow-sm transition-transform active:scale-90 cursor-pointer"
                     >
                       <Heart
-                        className={`w-4 h-4 transition-colors ${
-                          isFav ? 'fill-rose-500 text-rose-500' : 'text-[#475569]'
-                        }`}
+                        className={`w-4 h-4 transition-colors ${isFav ? 'fill-rose-500 text-rose-500' : 'text-[#475569]'
+                          }`}
                       />
                     </button>
 
@@ -697,11 +691,10 @@ export const Home: React.FC = () => {
                         <button
                           key={dest.id}
                           onClick={() => handleSelectPlanDest(dest.id)}
-                          className={`relative w-28 h-24 rounded-2xl overflow-hidden shrink-0 transition-all text-left cursor-pointer group ${
-                            isSelected
+                          className={`relative w-28 h-24 rounded-2xl overflow-hidden shrink-0 transition-all text-left cursor-pointer group ${isSelected
                               ? 'ring-2 ring-[#168BFF] ring-offset-2 scale-[1.03] shadow-md'
                               : 'opacity-70 hover:opacity-100 hover:scale-[1.01] border border-[#E2E8F0]'
-                          }`}
+                            }`}
                         >
                           <img
                             src={dest.image}
@@ -766,19 +759,17 @@ export const Home: React.FC = () => {
                           key={activity.id}
                           type="button"
                           onClick={() => handleToggleActivity(activity.id)}
-                          className={`flex items-center justify-between gap-2 p-2.5 rounded-xl text-left transition-all cursor-pointer border ${
-                            isChecked
+                          className={`flex items-center justify-between gap-2 p-2.5 rounded-xl text-left transition-all cursor-pointer border ${isChecked
                               ? 'bg-[#F0F9FF] border-[#BAE6FD] text-[#0369A1]'
                               : 'bg-[#F8FAFC] border-[#E8EEF5] text-[#64748B] hover:border-[#CBD5E1]'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <div
-                              className={`w-4 h-4 rounded-md flex items-center justify-center text-[10px] shrink-0 font-bold ${
-                                isChecked
+                              className={`w-4 h-4 rounded-md flex items-center justify-center text-[10px] shrink-0 font-bold ${isChecked
                                   ? 'bg-[#168BFF] text-white'
                                   : 'border border-[#CBD5E1] bg-white'
-                              }`}
+                                }`}
                             >
                               {isChecked ? '✓' : ''}
                             </div>
@@ -862,11 +853,10 @@ export const Home: React.FC = () => {
             <div className="mt-6 inline-flex items-center p-1 bg-[#F1F5F9] rounded-full border border-[#E2E8F0]">
               <button
                 onClick={() => setTestimonialTab('text')}
-                className={`px-5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                  testimonialTab === 'text'
+                className={`px-5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${testimonialTab === 'text'
                     ? 'bg-[#101827] text-white shadow-xs'
                     : 'text-[#64748B] hover:text-[#101827]'
-                }`}
+                  }`}
               >
                 • Text Reviews
               </button>

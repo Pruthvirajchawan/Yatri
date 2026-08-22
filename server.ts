@@ -81,6 +81,8 @@ async function startServer() {
       server: { middlewareMode: true },
       appType: 'spa',
     });
+    // Explicitly serve public files in dev mode because Vite's middleware sometimes doesn't catch them properly
+    app.use(express.static(path.join(process.cwd(), 'public')));
     app.use(vite.middlewares);
   } else {
     // Robust path resolution for Cloud Run container

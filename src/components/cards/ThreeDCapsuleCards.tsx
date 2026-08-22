@@ -27,7 +27,7 @@ const CAPSULES: CapsuleDestination[] = [
     id: 'gujarat',
     name: 'Gujarat',
     subtitle: 'Somnath Temple & Sacred Coast',
-    image: '/images/gujarat_somnath_card.jpg',
+    image: '/images/gujarat_somnath_card.jpg?v=2',
     tag: 'Sacred Heritage & Coast',
     price: 9499,
     objectPosition: 'object-center'
@@ -36,7 +36,7 @@ const CAPSULES: CapsuleDestination[] = [
     id: 'kerala',
     name: 'Kerala',
     subtitle: 'Alleppey Backwaters & Munnar Hills',
-    image: '/images/kerala_card.jpg',
+    image: '/images/kerala_card.jpg?v=2',
     tag: "God's Own Country",
     price: 11999,
     objectPosition: 'object-center'
@@ -116,17 +116,15 @@ export const ThreeDCapsuleCards: React.FC<ThreeDCapsuleCardsProps> = ({ onSelect
                 transformStyle: 'preserve-3d',
                 zIndex
               }}
-              className={`group relative cursor-pointer ${
-                compact
+              className={`group relative cursor-pointer ${compact
                   ? 'w-24 h-32 sm:w-28 sm:h-38'
                   : 'w-28 h-40 sm:w-36 sm:h-52 md:w-44 md:h-60'
-              }`}
+                }`}
             >
               {/* Soft 3D Glow & Ambient Shadow Underneath */}
               <div
-                className={`absolute -inset-1 rounded-[2.2rem] sm:rounded-[2.8rem] bg-gradient-to-b from-sky-400/40 via-blue-500/20 to-transparent blur-md transition-opacity duration-300 ${
-                  isHovered || isCenter ? 'opacity-80' : 'opacity-30'
-                }`}
+                className={`absolute -inset-1 rounded-[2.2rem] sm:rounded-[2.8rem] bg-gradient-to-b from-sky-400/40 via-blue-500/20 to-transparent blur-md transition-opacity duration-300 ${isHovered || isCenter ? 'opacity-80' : 'opacity-30'
+                  }`}
               />
 
               {/* Main 3D Pill Capsule Card Container */}
@@ -153,7 +151,7 @@ export const ThreeDCapsuleCards: React.FC<ThreeDCapsuleCardsProps> = ({ onSelect
                     <h3 className="font-serif text-lg sm:text-2xl md:text-3xl font-semibold text-white tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                       {item.name}
                     </h3>
-                    
+
                     {/* Hover badge with INR pricing */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1 flex items-center gap-1 px-2.5 py-0.5 bg-white/20 backdrop-blur-md rounded-full text-[10px] sm:text-xs text-white font-medium">
                       <span>{formatINR(item.price)}</span>
