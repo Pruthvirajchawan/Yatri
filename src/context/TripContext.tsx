@@ -4,6 +4,7 @@ import { DEFAULT_RAJASTHAN_TRIP, ALL_MOCK_TRIPS } from '../data/trips';
 import { tripService } from '../services/tripService';
 import { budgetService } from '../services/budgetService';
 import { groupService } from '../services/groupService';
+import { useAuth } from './AuthContext';
 
 interface TripContextType {
   currentTrip: Trip;
@@ -45,12 +46,14 @@ const normalizeTrip = (trip: Trip): Trip => {
 const TripContext = createContext<TripContextType | undefined>(undefined);
 
 export const TripProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user, userProfile, updateUserProfileData } = useAuth();
   const [currentTrip, setCurrentTripState] = useState<Trip>(normalizeTrip(DEFAULT_RAJASTHAN_TRIP));
   const [allTrips, setAllTrips] = useState<Trip[]>(ALL_MOCK_TRIPS.map(normalizeTrip));
   const [savedDestinationIds, setSavedDestinationIds] = useState<string[]>(['udaipur', 'kashmir', 'coorg']);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTradeOffId, setActiveTradeOffId] = useState<string>('tradeoff-relaxed-jaipur-jodhpur');
 
+  // Load trips whenever auth state or user changes
   useEffect(() => {
     const init = async () => {
       try {
@@ -65,7 +68,14 @@ export const TripProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     };
     init();
-  }, []);
+  }, [user]);
+
+  // Sync saved destinations with user profile
+  useEffect(() => {
+    if (userProfile?.savedDestinationIds && Array.isArray(userProfile.savedDestinationIds)) {
+      setSavedDestinationIds(userProfile.savedDestinationIds);
+    }
+  }, [userProfile?.savedDestinationIds]);
 
   const setCurrentTrip = (trip: Trip) => {
     setCurrentTripState(normalizeTrip(trip));
@@ -295,9 +305,13 @@ export const TripProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const toggleSaveDestination = (id: string) => {
-    setSavedDestinationIds((prev) =>
-      prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
-    );
+    setSavedDestinationIds((prev) => {
+      const updated = prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id];
+      if (user) {
+        updateUserProfileData({ savedDestinationIds: updated }).catch(() => {});
+      }
+      return updated;
+    });
   };
 
   const deleteTrip = async (id: string) => {

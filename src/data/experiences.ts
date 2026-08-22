@@ -15,7 +15,7 @@ export const INDIAN_EXPERIENCES: ExperienceType[] = [
     title: 'Cultural Journey',
     tagline: 'Centuries of royal Rajput, Mughal, and temple architecture',
     startingPrice: 11800,
-    image: 'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=800&auto=format&fit=crop',
     destinations: ['Jaipur', 'Varanasi', 'Hampi', 'Jodhpur'],
     highlight: 'Fort walks, folk musicians, artisan crafts & sacred aartis'
   },
@@ -60,7 +60,7 @@ export const INDIAN_EXPERIENCES: ExperienceType[] = [
     title: 'Spiritual Journey',
     tagline: 'Ancient ghats, sacred rivers, and meditative ashrams',
     startingPrice: 7900,
-    image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?q=80&w=800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?q=80&w=800&auto=format&fit=crop',
     destinations: ['Varanasi', 'Rishikesh', 'Haridwar', 'Madurai'],
     highlight: 'Sunrise boat oars, sound healing, evening aartis & yoga'
   }

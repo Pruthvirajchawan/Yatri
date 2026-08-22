@@ -184,6 +184,7 @@ export interface BudgetSavingSuggestion {
 
 export interface Trip {
   id: string;
+  userId?: string;
   title: string;
   destinationSummary: string;
   startDate: string;

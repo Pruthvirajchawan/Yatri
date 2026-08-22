@@ -33,24 +33,104 @@ import {
   INDIA_TOP_DESTINATIONS,
   INDIA_EXPERIENCES,
   TRAVELER_TESTIMONIALS,
+  QUICK_PLAN_DESTINATIONS,
   IndiaDestination,
   formatINR
 } from '../data/indiaData';
 import { useTrip } from '../context/TripContext';
+
+const HERO_BACKGROUNDS: Record<string, { image: string; title: string; altitude: string; temp: string }> = {
+  ladakh: {
+    image: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=85&w=2400&auto=format&fit=crop',
+    title: 'Ladakh High Passes',
+    altitude: '14,270 ft',
+    temp: '6°C'
+  },
+  gujarat: {
+    image: '/images/gujarat_somnath_bg.jpg',
+    title: 'Gujarat Sacred Shore (Somnath)',
+    altitude: 'Prabhas Patan Coast',
+    temp: '27°C'
+  },
+  kerala: {
+    image: '/images/kerala_bg.jpg',
+    title: 'Kerala Backwaters & Hills',
+    altitude: 'Vembanad & Munnar',
+    temp: '26°C'
+  }
+};
+
+const DEFAULT_HERO_INFO = {
+  image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=85&w=2400&auto=format&fit=crop',
+  title: 'Himalayan Range',
+  altitude: '11,500 ft',
+  temp: '12°C'
+};
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { createTrip } = useTrip();
 
   // State management
+  const [hoveredCapsuleId, setHoveredCapsuleId] = useState<string | null>(null);
   const [selectedDestination, setSelectedDestination] = useState<IndiaDestination | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
   const [testimonialTab, setTestimonialTab] = useState<'text' | 'video'>('text');
   const [savedFavorites, setSavedFavorites] = useState<Record<string, boolean>>({});
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  // Quick Plan In Minutes State
+  const [quickPlanDestId, setQuickPlanDestId] = useState<string>('jaipur');
+  const [selectedActivities, setSelectedActivities] = useState<string[]>(['j-1', 'j-2']);
 
   // Experience carousel ref
   const experienceScrollRef = useRef<HTMLDivElement>(null);
   const testimonialScrollRef = useRef<HTMLDivElement>(null);
+
+  const activePlanDest = QUICK_PLAN_DESTINATIONS.find((d) => d.id === quickPlanDestId) || QUICK_PLAN_DESTINATIONS[0];
+
+  const handleSelectPlanDest = (destId: string) => {
+    setQuickPlanDestId(destId);
+    const dest = QUICK_PLAN_DESTINATIONS.find((d) => d.id === destId);
+    if (dest && dest.activities.length >= 2) {
+      setSelectedActivities([dest.activities[0].id, dest.activities[1].id]);
+    } else if (dest) {
+      setSelectedActivities(dest.activities.map((a) => a.id));
+    }
+  };
+
+  const handleToggleActivity = (actId: string) => {
+    setSelectedActivities((prev) =>
+      prev.includes(actId)
+        ? prev.filter((id) => id !== actId)
+        : [...prev, actId]
+    );
+  };
+
+  const activeActivitiesTotal = activePlanDest.activities
+    .filter((a) => selectedActivities.includes(a.id))
+    .reduce((sum, a) => sum + a.price, 0);
+
+  const calculatedQuickPlanPrice = activePlanDest.basePrice + activeActivitiesTotal;
+
+  const handleBookQuickPlan = async () => {
+    await createTrip({
+      title: `${activePlanDest.name} Signature Explorer`,
+      destinationSummary: `${activePlanDest.name}, ${activePlanDest.state}`,
+      startDate: '2026-10-15',
+      endDate: '2026-10-18',
+      totalDays: activePlanDest.durationDays,
+      travelerCount: 2,
+      budgetPerPerson: calculatedQuickPlanPrice,
+      coverImage: activePlanDest.image,
+      travelStyle: 'Balanced'
+    });
+    navigate(`/plan?destination=${encodeURIComponent(activePlanDest.name)}`);
+  };
+
+  const currentHeroInfo = hoveredCapsuleId && HERO_BACKGROUNDS[hoveredCapsuleId]
+    ? HERO_BACKGROUNDS[hoveredCapsuleId]
+    : DEFAULT_HERO_INFO;
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -76,33 +156,78 @@ export const Home: React.FC = () => {
     }
   };
 
+  // Filtered destinations by category
+  const filteredDestinations = selectedCategory === 'All'
+    ? INDIA_TOP_DESTINATIONS
+    : INDIA_TOP_DESTINATIONS.filter((d) => {
+        if (selectedCategory === 'Heritage') return d.category === 'Heritage';
+        if (selectedCategory === 'Beaches & Backwaters') return d.category === 'Beaches' || d.category === 'Backwaters';
+        if (selectedCategory === 'Spiritual') return d.category === 'Spiritual';
+        if (selectedCategory === 'Wildlife') return d.category === 'Wildlife';
+        if (selectedCategory === 'Mountains') return d.category === 'Mountains';
+        return true;
+      });
+
+  const categories = ['All', 'Heritage', 'Beaches & Backwaters', 'Spiritual', 'Wildlife', 'Mountains'];
+
   return (
     <div className="min-h-screen bg-white text-[#101827] overflow-x-hidden font-sans">
       {/* =========================================================================
-          HERO SECTION — Mountain Image Backdrop, Cool UI, & 3D Capsule Cards
+          HERO SECTION — Preserved 3 Places (Ladakh, Gujarat Somnath, Kerala) with 3D Capsule Cards
       ========================================================================= */}
       <section className="relative pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden bg-[#F4FAFF]">
-        {/* Mountain Image Background with High-End Cool Gradient Overlays */}
-        <div className="absolute inset-0 z-0">
+        {/* Scenery Background with Smooth Dynamic Hover Switching */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          {/* Default Base Background */}
           <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop"
-            alt="Majestic Himalayan Mountains"
-            className="w-full h-full object-cover object-center opacity-25 filter contrast-105"
+            src={DEFAULT_HERO_INFO.image}
+            alt="Incredible India Landscape"
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-110 saturate-110 ${
+              hoveredCapsuleId ? 'opacity-0 scale-105' : 'opacity-65 scale-100'
+            }`}
           />
-          {/* Gradients blending into soft clean aesthetic */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#EBF5FF]/90 via-[#F4FAFF]/80 to-[#FFFFFF]" />
-          <div className="absolute inset-0 bg-radial from-[#D4ECFF]/40 via-transparent to-transparent" />
+
+          {/* Ladakh Hover Background */}
+          <img
+            src={HERO_BACKGROUNDS.ladakh.image}
+            alt="Ladakh Mountain High Passes"
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-110 saturate-110 ${
+              hoveredCapsuleId === 'ladakh' ? 'opacity-85 scale-100' : 'opacity-0 scale-105'
+            }`}
+          />
+
+          {/* Gujarat Hover Background */}
+          <img
+            src={HERO_BACKGROUNDS.gujarat.image}
+            alt="Gujarat Somnath Temple Sacred Coast"
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-105 saturate-110 ${
+              hoveredCapsuleId === 'gujarat' ? 'opacity-90 scale-100' : 'opacity-0 scale-105'
+            }`}
+          />
+
+          {/* Kerala Hover Background */}
+          <img
+            src={HERO_BACKGROUNDS.kerala.image}
+            alt="Kerala Alleppey Backwaters and Houseboats"
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out filter contrast-105 saturate-115 ${
+              hoveredCapsuleId === 'kerala' ? 'opacity-90 scale-100' : 'opacity-0 scale-105'
+            }`}
+          />
+
+          {/* Clean gradient overlay ensuring scenery is vibrant while text stays super crisp */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/20 to-white/95" />
+          <div className="absolute inset-0 bg-radial from-transparent via-transparent to-white/30" />
         </div>
 
-        {/* Floating Mountain Altitude & Weather Pill */}
-        <div className="hidden sm:flex absolute top-20 right-8 z-10 items-center gap-2 px-3.5 py-1.5 bg-white/80 backdrop-blur-md rounded-full border border-sky-100 shadow-sm text-xs font-medium text-[#1e293b]">
-          <Mountain className="w-3.5 h-3.5 text-[#168BFF]" />
-          <span>Himalayan Range</span>
+        {/* Floating Region & Weather Pill */}
+        <div className="hidden sm:flex absolute top-20 right-8 z-10 items-center gap-2 px-3.5 py-1.5 bg-white/85 backdrop-blur-md rounded-full border border-sky-100 shadow-sm text-xs font-medium text-[#1e293b] transition-all duration-300">
+          <Compass className="w-3.5 h-3.5 text-[#168BFF]" />
+          <span className="transition-all duration-300">{currentHeroInfo.title}</span>
           <span className="text-slate-300">•</span>
-          <span className="text-[#168BFF] font-semibold">11,500 ft</span>
+          <span className="text-[#168BFF] font-semibold transition-all duration-300">{currentHeroInfo.altitude}</span>
           <span className="text-slate-300">•</span>
-          <span className="flex items-center gap-1 text-amber-500 font-semibold">
-            <Sun className="w-3 h-3 fill-amber-400" /> 12°C
+          <span className="flex items-center gap-1 text-amber-500 font-semibold transition-all duration-300">
+            <Sun className="w-3 h-3 fill-amber-400" /> {currentHeroInfo.temp}
           </span>
         </div>
 
@@ -131,24 +256,27 @@ export const Home: React.FC = () => {
 
             {/* Script Italic Eyebrow */}
             <span className="font-serif italic text-base sm:text-lg text-[#168BFF] font-medium tracking-wide">
-              Popular Mountain Destinations
+              Featured Iconic Destinations of India
             </span>
           </div>
 
-          {/* 3D Curved Capsule Cards Carousel (Ladakh, Kashmir, Spiti) */}
+          {/* 3D Curved Capsule Cards Carousel (Ladakh, Gujarat Somnath, Kerala) */}
           <div className="my-2 sm:my-4">
-            <ThreeDCapsuleCards onSelect={handleSelectFromCapsule} />
+            <ThreeDCapsuleCards
+              onSelect={handleSelectFromCapsule}
+              onHoverChange={setHoveredCapsuleId}
+            />
           </div>
 
           {/* Main Hero Serif Headline & Subtitle */}
           <div className="text-center max-w-3xl mx-auto mt-6 sm:mt-8 space-y-4">
             <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[#101827] leading-[1.08]">
-              Discover the Majestic <br />
-              <span className="font-serif font-bold text-[#101827]">Wild Mountains of India</span>
+              Discover the Wonders of <br />
+              <span className="font-serif font-bold text-[#101827]">Incredible India</span>
             </h1>
 
             <p className="text-sm sm:text-base md:text-lg text-[#64748B] max-w-2xl mx-auto leading-relaxed">
-              Explore curated Himalayan trails, plan your customized journey, and uncover the timeless wonders of incredible India in just one click
+              Explore royal heritage palaces, tranquil backwaters, sacred coastal temples, wildlife safaris, and high mountain passes with genuine transparent pricing in Indian Rupees (₹).
             </p>
 
             {/* Hero CTAs */}
@@ -171,7 +299,7 @@ export const Home: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 2: WHY TRAVEL WITH YATRI? (Himalayan Video Card + 3 Feature Boxes)
+          SECTION 2: WHY TRAVEL WITH YATRI? (India-Wide Banner + 3 Feature Boxes)
       ========================================================================= */}
       <section id="why-us" className="py-16 sm:py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -184,16 +312,21 @@ export const Home: React.FC = () => {
               Why Travel with Yatri?
             </h2>
             <p className="mt-3 text-xs sm:text-sm md:text-base text-[#64748B] leading-relaxed">
-              Handpicked Himalayan destinations, certified local Sherpas, and transparent pricing in Indian Rupees (₹) — everything you need for an unforgettable journey.
+              Handpicked heritage palaces, coastal lagoons, sacred ghats, and mountain trails with certified local guides and genuine transparent pricing in Indian Rupees (₹).
             </p>
           </div>
 
-          {/* Large Video Feature Banner Card (Himalayas / Pangong Pass) */}
+          {/* Large Video Feature Banner Card */}
           <div className="relative w-full max-w-5xl mx-auto rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-900 border border-[#E8EEF5] group">
             <div className="relative aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=1600&auto=format&fit=crop"
-                alt="Pangong Lake and High Himalayan Passes"
+                src="https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1600&auto=format&fit=crop"
+                alt="Rajasthan Palaces, Kerala Backwaters & Indian Wonders"
+                referrerPolicy="no-referrer"
+                loading="eager"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/gujarat_somnath_bg.jpg';
+                }}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter brightness-[0.88]"
               />
 
@@ -220,7 +353,7 @@ export const Home: React.FC = () => {
               {/* Bottom Caption Overlay */}
               <div className="absolute bottom-6 sm:bottom-8 left-6 sm:left-8 right-6 text-white">
                 <p className="font-serif text-lg sm:text-2xl md:text-3xl font-medium tracking-tight drop-shadow-md">
-                  From high altitude passes to tranquil valley retreats
+                  From royal Rajput fortresses to serene palm-fringed backwaters
                 </p>
               </div>
             </div>
@@ -228,16 +361,16 @@ export const Home: React.FC = () => {
 
           {/* 3 Feature Boxes Grid Underneath */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-10 sm:mt-12">
-            {/* Box 1: Curated Mountain Trails */}
+            {/* Box 1: Curated Pan-India Itineraries */}
             <div className="p-6 sm:p-7 rounded-3xl bg-[#F8FAFC] border border-[#E8EEF5] hover:border-[#168BFF]/40 transition-all hover:shadow-md flex flex-col items-start text-left">
               <div className="w-10 h-10 rounded-full bg-[#E0F2FE] text-[#168BFF] flex items-center justify-center mb-4 shadow-xs">
                 <Sparkles className="w-5 h-5" />
               </div>
               <h3 className="font-sans font-bold text-base sm:text-lg text-[#101827] mb-1">
-                Curated Mountain Trails
+                Handcrafted Pan-India Journeys
               </h3>
               <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
-                Handpicked scenic passes and serene valleys across India
+                Curated itineraries across Rajasthan palaces, Kerala waters, Varanasi ghats & coastal havens
               </p>
             </div>
 
@@ -250,20 +383,20 @@ export const Home: React.FC = () => {
                 Certified Local Guides
               </h3>
               <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
-                Travel safely with experienced mountain specialists & 24/7 support
+                Explore deeply with verified regional historians, licensed boat captains & 24/7 on-ground support
               </p>
             </div>
 
-            {/* Box 3: Transparent Pricing in INR */}
+            {/* Box 3: Genuine Transparent INR Pricing */}
             <div className="p-6 sm:p-7 rounded-3xl bg-[#F8FAFC] border border-[#E8EEF5] hover:border-[#168BFF]/40 transition-all hover:shadow-md flex flex-col items-start text-left">
               <div className="w-10 h-10 rounded-full bg-[#E0F2FE] text-[#168BFF] flex items-center justify-center mb-4 shadow-xs">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <h3 className="font-sans font-bold text-base sm:text-lg text-[#101827] mb-1">
-                Instant INR Pricing
+                Genuine Market Rates in ₹
               </h3>
               <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
-                Transparent costs in ₹ with no hidden fees or conversion surcharges
+                Honest, itemized costs with stays, private transport & permits included — zero hidden markups
               </p>
             </div>
           </div>
@@ -271,26 +404,43 @@ export const Home: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 3: TOP DESTINATIONS IN INDIA (6 Cards with INR Currency)
+          SECTION 3: TOP DESTINATIONS IN INDIA (Diverse Places with Category Tabs)
       ========================================================================= */}
       <section id="destinations" className="py-16 sm:py-24 bg-[#FAFCFF] relative border-t border-[#E8EEF5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
             <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[#E0F2FE] text-[#168BFF] mb-3 text-xs">
               ✦
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#101827]">
-              Top Destinations in India
+              Top Destinations Across India
             </h2>
             <p className="mt-3 text-xs sm:text-sm md:text-base text-[#64748B] leading-relaxed max-w-xl mx-auto">
-              From Ladakh's high passes to Kashmir's snow peaks and Spiti's cliff monasteries — find your perfect mountain getaway
+              From the golden forts of Rajasthan and serene backwaters of Kerala to sacred ghats in Varanasi and turquoise Andaman lagoons.
             </p>
+
+            {/* Category Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    selectedCategory === cat
+                      ? 'bg-[#101827] text-white shadow-sm'
+                      : 'bg-white text-[#64748B] border border-[#E2E8F0] hover:border-[#168BFF]/50 hover:text-[#101827]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* 6 Destination Cards Grid */}
+          {/* Diverse Destination Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
-            {INDIA_TOP_DESTINATIONS.map((destination) => {
+            {filteredDestinations.map((destination) => {
               const isFav = !!savedFavorites[destination.id];
 
               return (
@@ -304,11 +454,13 @@ export const Home: React.FC = () => {
                     <img
                       src={destination.image}
                       alt={destination.name}
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
                     />
 
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/20" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
 
                     {/* Favorite Heart Button */}
                     <button
@@ -329,20 +481,23 @@ export const Home: React.FC = () => {
                       <span>{destination.rating}</span>
                     </div>
 
-                    {/* Altitude Tag if available */}
-                    {destination.altitude && (
-                      <div className="absolute bottom-16 left-4 px-2.5 py-0.5 bg-black/40 backdrop-blur-md rounded-full text-[10px] text-sky-200 font-medium flex items-center gap-1">
-                        <Mountain className="w-2.5 h-2.5" />
-                        <span>{destination.altitude}</span>
-                      </div>
-                    )}
+                    {/* State Tag & Category */}
+                    <div className="absolute bottom-16 left-4 flex items-center gap-1.5 flex-wrap">
+                      <span className="px-2.5 py-0.5 bg-black/50 backdrop-blur-md rounded-full text-[11px] text-white font-medium flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-[#168BFF]" />
+                        <span>{destination.state}</span>
+                      </span>
+                      <span className="px-2.5 py-0.5 bg-[#168BFF]/80 backdrop-blur-md rounded-full text-[10px] text-white font-medium">
+                        {destination.category}
+                      </span>
+                    </div>
 
                     {/* Bottom Title on Image */}
                     <div className="absolute bottom-4 left-4 right-4 text-white">
                       <h3 className="font-serif text-2xl font-bold tracking-tight">
                         {destination.name}
                       </h3>
-                      <p className="text-xs text-slate-200 font-medium">
+                      <p className="text-xs text-slate-200 font-medium truncate">
                         {destination.subtitle}
                       </p>
                     </div>
@@ -375,7 +530,7 @@ export const Home: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 4: WHAT DO YOU WANT TO EXPERIENCE? (Himalayan Carousel in INR)
+          SECTION 4: WHAT DO YOU WANT TO EXPERIENCE? (Pan-India Experiences)
       ========================================================================= */}
       <section id="experiences" className="py-16 sm:py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -389,7 +544,7 @@ export const Home: React.FC = () => {
                 What Do You Want to Experience?
               </h2>
               <p className="mt-2 text-xs sm:text-sm md:text-base text-[#64748B] max-w-xl">
-                Choose from a variety of authentic Indian mountain expeditions, river adventures, and spiritual retreats.
+                Choose from luxury backwater cruises, sunrise Ganges Aarti boats, desert camel safaris, tiger tracking, scuba diving, and mountain treks.
               </p>
             </div>
 
@@ -428,22 +583,30 @@ export const Home: React.FC = () => {
                   <img
                     src={exp.image}
                     alt={exp.title}
+                    referrerPolicy="no-referrer"
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
-                  {/* Badge */}
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold">
-                    {exp.category}
+                  {/* Category & Location Badges */}
+                  <div className="absolute top-4 left-4 flex items-center gap-1.5">
+                    <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold">
+                      {exp.category}
+                    </span>
                   </div>
 
                   {/* Title and Price on Card */}
                   <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h3 className="font-serif text-2xl font-bold tracking-tight">
+                    <div className="text-[11px] text-sky-200 font-medium flex items-center gap-1 mb-1">
+                      <MapPin className="w-3 h-3" />
+                      <span>{exp.location}</span>
+                    </div>
+                    <h3 className="font-serif text-xl sm:text-2xl font-bold tracking-tight line-clamp-2">
                       {exp.title}
                     </h3>
                     <p className="text-xs text-slate-200 mt-1">
-                      Start from {formatINR(exp.price)}
+                      Starts from <span className="font-bold text-white">{formatINR(exp.price)}</span>
                     </p>
                   </div>
                 </div>
@@ -463,7 +626,7 @@ export const Home: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 5: PLAN YOUR TRIP IN MINUTES (3-Step Indian Mountain Stepper)
+          SECTION 5: PLAN YOUR TRIP IN MINUTES (Pan-India 3-Step Stepper)
       ========================================================================= */}
       <section id="planning" className="py-16 sm:py-24 bg-[#FAFCFF] relative border-t border-[#E8EEF5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -480,17 +643,21 @@ export const Home: React.FC = () => {
               </h2>
 
               <p className="text-xs sm:text-sm md:text-base text-[#64748B] leading-relaxed max-w-md">
-                Choose your Himalayan destination, pick your activities, and get a personalized itinerary with transparent pricing in Indian Rupees (₹).
+                Choose your dream Indian destination, select authentic local experiences, and get a realistic itemized plan with transparent pricing in Indian Rupees (₹).
               </p>
 
-              <div className="pt-2">
-                <Link
-                  to="/plan"
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#101827] hover:bg-[#1f2937] text-white text-xs sm:text-sm font-medium rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
+              <div className="space-y-3 pt-2">
+                <button
+                  onClick={handleBookQuickPlan}
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#101827] hover:bg-[#168BFF] text-white text-xs sm:text-sm font-medium rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
                 >
-                  <span>Start Planning Now</span>
+                  <span>Start Planning for {activePlanDest.name}</span>
                   <ArrowRight className="w-4 h-4" />
-                </Link>
+                </button>
+                <p className="text-[11px] text-[#64748B] flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>No hidden fees · Free instant itinerary builder</span>
+                </p>
               </div>
             </div>
 
@@ -507,49 +674,61 @@ export const Home: React.FC = () => {
 
                 <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8EEF5] shadow-xs relative">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-sans font-bold text-base sm:text-lg text-[#101827]">
-                      Select Destination
-                    </h3>
+                    <div>
+                      <h3 className="font-sans font-bold text-base sm:text-lg text-[#101827]">
+                        1. Select Destination
+                      </h3>
+                      <p className="text-[11px] text-[#64748B]">
+                        Currently selected:{' '}
+                        <span className="font-bold text-[#168BFF]">{activePlanDest.name} ({activePlanDest.state})</span>
+                      </p>
+                    </div>
                     {/* Speech Tag Bubble Sticker */}
-                    <div className="px-3 py-1 bg-[#FEF08A] rounded-full text-[11px] font-bold text-[#854D0E] shadow-xs transform rotate-2">
-                      Loved by Himalayan trekkers!
+                    <div className="hidden sm:block px-3 py-1 bg-[#FEF08A] rounded-full text-[11px] font-bold text-[#854D0E] shadow-xs transform rotate-2">
+                      Click to choose!
                     </div>
                   </div>
 
                   {/* Destination Mini Preview Carousel */}
-                  <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
-                    <div className="relative w-24 h-20 rounded-2xl overflow-hidden shrink-0 border-2 border-[#168BFF] shadow-xs">
-                      <img
-                        src="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=300&auto=format&fit=crop"
-                        alt="Ladakh"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1.5">
-                        <span className="text-[11px] font-semibold text-white">Ladakh</span>
-                      </div>
-                    </div>
-
-                    <div className="relative w-24 h-20 rounded-2xl overflow-hidden shrink-0 opacity-70 hover:opacity-100 transition-opacity">
-                      <img
-                        src="https://images.unsplash.com/photo-1595815771614-ade9d652a65d?q=80&w=300&auto=format&fit=crop"
-                        alt="Kashmir"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1.5">
-                        <span className="text-[11px] font-semibold text-white">Kashmir</span>
-                      </div>
-                    </div>
-
-                    <div className="relative w-24 h-20 rounded-2xl overflow-hidden shrink-0 opacity-70 hover:opacity-100 transition-opacity">
-                      <img
-                        src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=300&auto=format&fit=crop"
-                        alt="Spiti"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1.5">
-                        <span className="text-[11px] font-semibold text-white">Spiti</span>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar py-2">
+                    {QUICK_PLAN_DESTINATIONS.map((dest) => {
+                      const isSelected = quickPlanDestId === dest.id;
+                      return (
+                        <button
+                          key={dest.id}
+                          onClick={() => handleSelectPlanDest(dest.id)}
+                          className={`relative w-28 h-24 rounded-2xl overflow-hidden shrink-0 transition-all text-left cursor-pointer group ${
+                            isSelected
+                              ? 'ring-2 ring-[#168BFF] ring-offset-2 scale-[1.03] shadow-md'
+                              : 'opacity-70 hover:opacity-100 hover:scale-[1.01] border border-[#E2E8F0]'
+                          }`}
+                        >
+                          <img
+                            src={dest.image}
+                            alt={dest.name}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-between p-2">
+                            <div className="flex justify-end">
+                              {isSelected && (
+                                <span className="w-4 h-4 rounded-full bg-[#168BFF] text-white flex items-center justify-center text-[10px] shadow-xs font-bold">
+                                  ✓
+                                </span>
+                              )}
+                            </div>
+                            <div>
+                              <span className="text-[11px] font-bold text-white block leading-tight">
+                                {dest.name}
+                              </span>
+                              <span className="text-[9px] text-sky-200">
+                                {dest.durationDays}D · from {formatINR(dest.basePrice)}
+                              </span>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -565,40 +744,54 @@ export const Home: React.FC = () => {
 
                 <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8EEF5] shadow-xs relative">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-sans font-bold text-base sm:text-lg text-[#101827]">
-                      Pick Activities
-                    </h3>
-                    {/* Speech Tag Bubble Sticker */}
-                    <div className="px-3 py-1 bg-[#FEF08A] rounded-full text-[11px] font-bold text-[#854D0E] shadow-xs transform -rotate-1">
-                      Thrilling mountain activities!
+                    <div>
+                      <h3 className="font-sans font-bold text-base sm:text-lg text-[#101827]">
+                        2. Pick Activities in {activePlanDest.name}
+                      </h3>
+                      <p className="text-[11px] text-[#64748B]">
+                        Select or uncheck experiences to customize your price
+                      </p>
+                    </div>
+                    <div className="px-2.5 py-0.5 bg-sky-50 text-[#168BFF] rounded-full text-[11px] font-bold">
+                      {selectedActivities.length} Chosen
                     </div>
                   </div>
 
                   {/* Activity Checkboxes */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#F0F9FF] border border-[#BAE6FD]">
-                      <div className="w-4 h-4 rounded-md bg-[#168BFF] text-white flex items-center justify-center text-[10px]">
-                        ✓
-                      </div>
-                      <span className="text-xs font-medium text-[#0369A1]">Pangong Tso Stargazing Camp</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#F0F9FF] border border-[#BAE6FD]">
-                      <div className="w-4 h-4 rounded-md bg-[#168BFF] text-white flex items-center justify-center text-[10px]">
-                        ✓
-                      </div>
-                      <span className="text-xs font-medium text-[#0369A1]">Khardung La High Pass 4x4 Safari</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E8EEF5]">
-                      <div className="w-4 h-4 rounded-md border border-[#CBD5E1]" />
-                      <span className="text-xs font-medium text-[#64748B]">Dal Lake Shikara Sunrise Cruise</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E8EEF5]">
-                      <div className="w-4 h-4 rounded-md border border-[#CBD5E1]" />
-                      <span className="text-xs font-medium text-[#64748B]">Gulmarg Powder Snow Skiing</span>
-                    </div>
+                    {activePlanDest.activities.map((activity) => {
+                      const isChecked = selectedActivities.includes(activity.id);
+                      return (
+                        <button
+                          key={activity.id}
+                          type="button"
+                          onClick={() => handleToggleActivity(activity.id)}
+                          className={`flex items-center justify-between gap-2 p-2.5 rounded-xl text-left transition-all cursor-pointer border ${
+                            isChecked
+                              ? 'bg-[#F0F9FF] border-[#BAE6FD] text-[#0369A1]'
+                              : 'bg-[#F8FAFC] border-[#E8EEF5] text-[#64748B] hover:border-[#CBD5E1]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div
+                              className={`w-4 h-4 rounded-md flex items-center justify-center text-[10px] shrink-0 font-bold ${
+                                isChecked
+                                  ? 'bg-[#168BFF] text-white'
+                                  : 'border border-[#CBD5E1] bg-white'
+                              }`}
+                            >
+                              {isChecked ? '✓' : ''}
+                            </div>
+                            <span className="text-xs font-medium truncate">
+                              {activity.name}
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-semibold shrink-0 text-[#168BFF]">
+                            +{formatINR(activity.price)}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -611,27 +804,36 @@ export const Home: React.FC = () => {
                 </div>
 
                 <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8EEF5] shadow-md relative">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                     <div>
                       <h3 className="font-sans font-bold text-base sm:text-lg text-[#101827]">
-                        Get Itinerary & Price
+                        3. Get Itinerary & Price
                       </h3>
-                      <p className="text-xs text-[#64748B]">Customized 6-Day Ladakh Mountain Expedition</p>
+                      <p className="text-xs text-[#64748B]">
+                        Customized {activePlanDest.durationDays}-Day {activePlanDest.name} & {activePlanDest.state} Explorer
+                      </p>
                     </div>
 
-                    <div className="text-right">
-                      <div className="text-[11px] text-[#64748B]">Estimated Total</div>
-                      <div className="font-serif text-2xl font-bold text-[#101827]">{formatINR(24999)}</div>
+                    <div className="text-left sm:text-right">
+                      <div className="text-[11px] text-[#64748B]">Estimated Total / Person</div>
+                      <div className="font-serif text-2xl font-bold text-[#101827]">
+                        {formatINR(calculatedQuickPlanPrice)}
+                      </div>
+                      <div className="text-[10px] text-emerald-600 font-medium">
+                        Includes stays, {selectedActivities.length} activities & local guide
+                      </div>
                     </div>
                   </div>
 
-                  <Link
-                    to="/plan"
-                    className="w-full py-2.5 bg-[#101827] hover:bg-[#168BFF] text-white text-xs font-medium rounded-full transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                  >
-                    <span>Book Your Trip Now</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  <div className="flex flex-col sm:flex-row items-center gap-2">
+                    <button
+                      onClick={handleBookQuickPlan}
+                      className="w-full py-3 bg-[#101827] hover:bg-[#168BFF] text-white text-xs sm:text-sm font-medium rounded-full transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-95"
+                    >
+                      <span>Book {activePlanDest.name} Trip Now</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -640,7 +842,7 @@ export const Home: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 6: LOVED BY TRAVELERS WORLDWIDE (Indian Traveler Reviews)
+          SECTION 6: LOVED BY TRAVELERS ACROSS INDIA (Verified Traveler Reviews)
       ========================================================================= */}
       <section className="py-16 sm:py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -653,7 +855,7 @@ export const Home: React.FC = () => {
               Loved by Travelers Across India
             </h2>
             <p className="mt-3 text-xs sm:text-sm md:text-base text-[#64748B] leading-relaxed max-w-xl mx-auto">
-              Thousands of explorers trust Yatri to make their mountain journeys seamless, memorable, and safe.
+              Thousands of explorers trust Yatri to make their Indian journeys seamless, memorable, and safe.
             </p>
 
             {/* Text / Video Switch Pill */}
@@ -764,19 +966,19 @@ export const Home: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 7: READY FOR YOUR NEXT ADVENTURE? (3D Floating Mountain Section)
+          SECTION 7: READY FOR YOUR NEXT ADVENTURE? (3D Floating Section)
       ========================================================================= */}
       <section className="relative pt-20 pb-28 md:pt-28 md:pb-36 overflow-hidden bg-gradient-to-b from-[#FFFFFF] via-[#F4FAFF] to-[#EBF5FF] border-t border-[#E8EEF5]">
         {/* Soft atmospheric background glow */}
         <div className="absolute inset-0 bg-radial from-[#D4ECFF]/50 via-transparent to-transparent pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          {/* Top Mountain Badge */}
+          {/* Top Badge */}
           <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#E0F2FE] text-[#168BFF] mb-4 text-xs">
             ✦
           </div>
 
-          {/* 3D Floating Capsule Cards (Ladakh, Kashmir, Spiti) */}
+          {/* 3D Floating Capsule Cards (Ladakh, Gujarat Somnath, Kerala) */}
           <div className="my-4 sm:my-6">
             <ThreeDCapsuleCards onSelect={handleSelectFromCapsule} compact />
           </div>
@@ -784,11 +986,11 @@ export const Home: React.FC = () => {
           {/* Heading and Call to Action */}
           <div className="max-w-2xl mx-auto space-y-4 mt-6">
             <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#101827] leading-tight">
-              Ready for Your Himalayan Journey?
+              Ready to Explore Incredible India?
             </h2>
 
             <p className="text-xs sm:text-sm md:text-base text-[#64748B] max-w-lg mx-auto leading-relaxed">
-              Start planning your Indian mountain expedition today and discover hidden trails with custom itineraries in Indian Rupees (₹).
+              Start planning your journey today and discover ancient palaces, tranquil waterways, and iconic landscapes with transparent pricing in Indian Rupees (₹).
             </p>
 
             <div className="pt-4">

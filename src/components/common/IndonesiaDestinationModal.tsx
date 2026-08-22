@@ -21,12 +21,14 @@ export const IndonesiaDestinationModal: React.FC<IndonesiaDestinationModalProps>
     // Generate a new trip based on this destination
     createTrip({
       title: `${destination.name} Explorer`,
-      destination: destination.name,
+      destinationSummary: destination.name,
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date(Date.now() + destination.durationDays * 86400000).toISOString().split('T')[0],
-      budget: destination.startPrice * guestCount,
-      travelers: guestCount,
-      theme: destination.tags[0] || 'Adventure'
+      totalDays: destination.durationDays,
+      estimatedTotalBudget: destination.startPrice * guestCount,
+      budgetPerPerson: destination.startPrice,
+      travelerCount: guestCount,
+      coverImage: destination.heroImage
     });
     onClose();
     navigate('/plan');

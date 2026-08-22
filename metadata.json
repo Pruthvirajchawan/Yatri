@@ -1,6 +1,6 @@
 {
   "name": "GlobeTrotter",
-  "description": "Yatri - Discover the wild beauty and majestic mountains of India with 3D curated destination cards, authentic Himalayan experiences, and interactive trip planning in INR (₹).",
+  "description": "Yatri - Discover the iconic wonders of India with 3D curated destination cards, royal heritage havelis, serene backwaters, sacred temples, wildlife safaris, and transparent trip planning in Indian Rupees (₹).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

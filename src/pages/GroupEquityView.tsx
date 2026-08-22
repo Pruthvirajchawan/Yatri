@@ -13,8 +13,8 @@ export const GroupEquityView: React.FC = () => {
   const handleBalance = async () => {
     setIsBalancing(true);
     try {
-      const res = await balanceGroupEquity();
-      setBalanceToast(res.message);
+      await balanceGroupEquity();
+      setBalanceToast('Group preference weights and satisfaction scores successfully rebalanced!');
       setTimeout(() => setBalanceToast(null), 5000);
     } finally {
       setIsBalancing(false);

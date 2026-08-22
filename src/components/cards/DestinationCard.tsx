@@ -30,6 +30,7 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
           src={destination.heroImage}
           alt={destination.name}
           loading="lazy"
+          referrerPolicy="no-referrer"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
         />
         {/* Soft Vignette Overlay */}

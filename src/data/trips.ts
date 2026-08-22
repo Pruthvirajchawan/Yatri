@@ -10,7 +10,7 @@ export const DEFAULT_RAJASTHAN_TRIP: Trip = {
   travelerCount: 4,
   estimatedTotalBudget: 118000,
   budgetPerPerson: 29500,
-  coverImage: 'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=1200&auto=format&fit=crop',
+  coverImage: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1200&auto=format&fit=crop',
   status: 'Upcoming',
   travelStyle: 'Balanced',
   health: {

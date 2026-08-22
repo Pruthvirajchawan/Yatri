@@ -1,34 +1,91 @@
 import { Trip, DayItinerary, Activity, TradeOffOption, TripHealth } from '../types';
 import { ALL_MOCK_TRIPS, DEFAULT_RAJASTHAN_TRIP } from '../data/trips';
 import { apiRequest } from './apiClient';
+import { db, auth } from '../lib/firebase';
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where
+} from 'firebase/firestore';
 
 const LOCAL_STORAGE_KEY = 'yatri_trips_v1';
 
 export const tripService = {
   getTrips: async (): Promise<Trip[]> => {
+    // 1. If user is logged in, try Firestore first
+    if (auth.currentUser) {
+      try {
+        const tripsRef = collection(db, 'trips');
+        const q = query(tripsRef, where('userId', '==', auth.currentUser.uid));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const firestoreTrips: Trip[] = [];
+          querySnapshot.forEach((docSnap) => {
+            firestoreTrips.push(docSnap.data() as Trip);
+          });
+          if (firestoreTrips.length > 0) {
+            try {
+              localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(firestoreTrips));
+            } catch (e) {}
+            return firestoreTrips;
+          }
+        }
+      } catch (firestoreErr) {
+        console.warn('Firestore getTrips query note:', firestoreErr);
+      }
+    }
+
+    // 2. Try Backend Server API
     try {
       const res = await apiRequest<Trip[]>('/api/trips');
       if (res.success && Array.isArray(res.data) && res.data.length > 0) {
-        // Cache to local storage
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(res.data));
+        try {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(res.data));
+        } catch (e) {}
         return res.data;
       }
     } catch (e) {
-      console.warn('Backend /api/trips unavailable, using local cache', e);
+      console.warn('Backend /api/trips unavailable, checking local cache', e);
     }
 
+    // 3. Try LocalStorage
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
       }
     } catch (e) {
-      console.warn('LocalStorage unavailable, returning mock data', e);
+      console.warn('LocalStorage parse note:', e);
     }
+
     return ALL_MOCK_TRIPS;
   },
 
   getTripById: async (id: string): Promise<Trip | null> => {
+    // 1. Try Firestore if logged in
+    if (auth.currentUser) {
+      try {
+        const docRef = doc(db, 'trips', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          return docSnap.data() as Trip;
+        }
+      } catch (e) {
+        console.warn('Firestore getTripById note:', e);
+      }
+    }
+
+    // 2. Try Backend Server
     try {
       const res = await apiRequest<Trip>(`/api/trips/${encodeURIComponent(id)}`);
       if (res.success && res.data) {
@@ -43,24 +100,13 @@ export const tripService = {
   },
 
   createTrip: async (tripData: Partial<Trip>): Promise<Trip> => {
-    try {
-      const res = await apiRequest<Trip>('/api/trips', {
-        method: 'POST',
-        body: JSON.stringify(tripData)
-      });
-      if (res.success && res.data) {
-        const trips = await tripService.getTrips();
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([res.data, ...trips]));
-        return res.data;
-      }
-    } catch (e) {
-      console.warn('Server createTrip failed, saving locally', e);
-    }
+    const tripId = tripData.id || `trip-${Date.now()}`;
+    const currentUid = auth.currentUser ? auth.currentUser.uid : 'guest';
 
-    const trips = await tripService.getTrips();
     const newTrip: Trip = {
       ...DEFAULT_RAJASTHAN_TRIP,
-      id: `trip-${Date.now()}`,
+      id: tripId,
+      userId: currentUid,
       title: tripData.title || 'New Custom Yatri',
       destinationSummary: tripData.destinationSummary || 'Custom Itinerary',
       startDate: tripData.startDate || '2026-10-20',
@@ -69,66 +115,113 @@ export const tripService = {
       travelerCount: tripData.travelerCount || 2,
       estimatedTotalBudget: tripData.estimatedTotalBudget || 45000,
       budgetPerPerson: Math.round((tripData.estimatedTotalBudget || 45000) / (tripData.travelerCount || 2)),
-      coverImage: tripData.coverImage || 'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=1200&auto=format&fit=crop',
+      coverImage: tripData.coverImage || 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1200&auto=format&fit=crop',
       status: 'Upcoming',
       travelStyle: tripData.travelStyle || 'Balanced',
       ...tripData
     } as Trip;
 
-    const updated = [newTrip, ...trips];
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-    } catch (e) {
-      console.warn('Could not save to localStorage', e);
+    // 1. Save to Firestore if user is authenticated
+    if (auth.currentUser) {
+      try {
+        const tripDocRef = doc(db, 'trips', tripId);
+        await setDoc(tripDocRef, {
+          ...newTrip,
+          userId: auth.currentUser.uid,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (fsErr) {
+        console.warn('Firestore setDoc trip note:', fsErr);
+      }
     }
+
+    // 2. Also save to server API if reachable
+    try {
+      await apiRequest<Trip>('/api/trips', {
+        method: 'POST',
+        body: JSON.stringify(newTrip)
+      });
+    } catch (e) {
+      console.warn('Server createTrip note:', e);
+    }
+
+    // 3. Update local storage cache
+    try {
+      const trips = await tripService.getTrips();
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([newTrip, ...trips.filter(t => t.id !== newTrip.id)]));
+    } catch (e) {}
+
     return newTrip;
   },
 
   updateTrip: async (id: string, updates: Partial<Trip>): Promise<Trip> => {
+    // 1. Update in Firestore if user is authenticated
+    if (auth.currentUser) {
+      try {
+        const tripDocRef = doc(db, 'trips', id);
+        await updateDoc(tripDocRef, {
+          ...updates,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (fsErr) {
+        console.warn('Firestore updateDoc note:', fsErr);
+      }
+    }
+
+    // 2. Try Server API
     try {
-      const res = await apiRequest<Trip>(`/api/trips/${encodeURIComponent(id)}`, {
+      await apiRequest<Trip>(`/api/trips/${encodeURIComponent(id)}`, {
         method: 'PUT',
         body: JSON.stringify(updates)
       });
-      if (res.success && res.data) {
-        return res.data;
-      }
     } catch (e) {
-      console.warn('Server updateTrip failed, updating local state', e);
+      console.warn('Server updateTrip note:', e);
     }
 
+    // 3. Update local cache
     const trips = await tripService.getTrips();
     const index = trips.findIndex((t) => t.id === id);
+    let updatedTrip: Trip;
     if (index === -1) {
-      const merged = { ...DEFAULT_RAJASTHAN_TRIP, ...updates, id };
-      return merged;
+      updatedTrip = { ...DEFAULT_RAJASTHAN_TRIP, ...updates, id } as Trip;
+      trips.unshift(updatedTrip);
+    } else {
+      updatedTrip = { ...trips[index], ...updates };
+      trips[index] = updatedTrip;
     }
-    const updatedTrip = { ...trips[index], ...updates };
-    trips[index] = updatedTrip;
+
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(trips));
-    } catch (e) {
-      console.warn('Could not save to localStorage', e);
-    }
+    } catch (e) {}
+
     return updatedTrip;
   },
 
   deleteTrip: async (id: string): Promise<boolean> => {
+    // 1. Delete from Firestore if authenticated
+    if (auth.currentUser) {
+      try {
+        const tripDocRef = doc(db, 'trips', id);
+        await deleteDoc(tripDocRef);
+      } catch (fsErr) {
+        console.warn('Firestore deleteDoc note:', fsErr);
+      }
+    }
+
+    // 2. Try Server API
     try {
       await apiRequest(`/api/trips/${encodeURIComponent(id)}`, {
         method: 'DELETE'
       });
-    } catch (e) {
-      console.warn('Server deleteTrip failed, deleting locally', e);
-    }
+    } catch (e) {}
 
+    // 3. Remove from local cache
     const trips = await tripService.getTrips();
     const filtered = trips.filter((t) => t.id !== id);
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filtered));
-    } catch (e) {
-      console.warn('Could not delete from localStorage', e);
-    }
+    } catch (e) {}
+
     return true;
   },
 
@@ -141,10 +234,9 @@ export const tripService = {
         return res.data;
       }
     } catch (e) {
-      console.warn('Server optimize call failed, running local algorithm', e);
+      console.warn('Server optimize call note, using local engine', e);
     }
 
-    // Algorithmic health optimization fallback
     const updatedItinerary = (trip.itinerary || trip.days || []).map((day) => {
       if (day.loadLevel === 'dense') {
         return {

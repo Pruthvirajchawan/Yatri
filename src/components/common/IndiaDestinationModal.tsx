@@ -21,13 +21,15 @@ export const IndiaDestinationModal: React.FC<IndiaDestinationModalProps> = ({ de
 
   const handleStartPlanning = () => {
     createTrip({
-      title: `${destination.name} Himalayan Explorer`,
-      destination: `${destination.name}, ${destination.state}`,
+      title: `${destination.name} Explorer`,
+      destinationSummary: `${destination.name}, ${destination.state}`,
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date(Date.now() + destination.durationDays * 86400000).toISOString().split('T')[0],
-      budget: destination.startPrice * guestCount,
-      travelers: guestCount,
-      theme: destination.tags[0] || 'Mountain Adventure'
+      totalDays: destination.durationDays,
+      estimatedTotalBudget: destination.startPrice * guestCount,
+      budgetPerPerson: destination.startPrice,
+      travelerCount: guestCount,
+      coverImage: destination.heroImage
     });
     onClose();
     navigate('/plan');
@@ -52,6 +54,7 @@ export const IndiaDestinationModal: React.FC<IndiaDestinationModalProps> = ({ de
               <img
                 src={destination.gallery[selectedPhoto] || destination.heroImage}
                 alt={destination.name}
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover transition-all duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
@@ -122,7 +125,7 @@ export const IndiaDestinationModal: React.FC<IndiaDestinationModalProps> = ({ de
                 </p>
               </div>
 
-              {/* Highlights List */}
+              {/* Key Trip Highlights */}
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#101827] mb-3">
                   Key Trip Highlights
@@ -137,6 +140,48 @@ export const IndiaDestinationModal: React.FC<IndiaDestinationModalProps> = ({ de
                 </div>
               </div>
 
+              {/* Price Breakdown - Transparent Genuine Rates */}
+              {destination.priceBreakdown && (
+                <div className="p-4 sm:p-5 bg-[#FAFCFF] rounded-2xl border border-[#E0EEFB]">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#101827] flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#168BFF]" />
+                      <span>Transparent Price Breakdown (per person)</span>
+                    </h3>
+                    <span className="text-[11px] font-semibold text-[#168BFF] bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
+                      Zero Hidden Fees
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="bg-white p-3 rounded-xl border border-[#E8EEF5]">
+                      <div className="text-[11px] text-[#64748B]">Stay & Haveli / Hotel</div>
+                      <div className="font-serif text-sm font-bold text-[#101827] mt-0.5">
+                        {formatINR(destination.priceBreakdown.stays)}
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-[#E8EEF5]">
+                      <div className="text-[11px] text-[#64748B]">Private AC Transport</div>
+                      <div className="font-serif text-sm font-bold text-[#101827] mt-0.5">
+                        {formatINR(destination.priceBreakdown.transport)}
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-[#E8EEF5]">
+                      <div className="text-[11px] text-[#64748B]">Guided Tours & Entry</div>
+                      <div className="font-serif text-sm font-bold text-[#101827] mt-0.5">
+                        {formatINR(destination.priceBreakdown.activitiesAndGuide)}
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-[#E8EEF5]">
+                      <div className="text-[11px] text-[#64748B]">Meals & Local Taxes</div>
+                      <div className="font-serif text-sm font-bold text-[#101827] mt-0.5">
+                        {formatINR(destination.priceBreakdown.mealsAndTaxes)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Included Features */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
                 <div className="p-3 bg-[#F4FAFF] rounded-2xl border border-[#E0F0FE] text-center">
@@ -145,14 +190,14 @@ export const IndiaDestinationModal: React.FC<IndiaDestinationModalProps> = ({ de
                   <div className="text-xs font-semibold text-[#101827]">{destination.durationDays}D / {destination.durationNights}N</div>
                 </div>
                 <div className="p-3 bg-[#F4FAFF] rounded-2xl border border-[#E0F0FE] text-center">
+                  <Calendar className="w-4 h-4 text-[#168BFF] mx-auto mb-1" />
+                  <div className="text-[11px] text-[#64748B]">Best Season</div>
+                  <div className="text-xs font-semibold text-[#101827]">{destination.bestSeason || 'Year-round'}</div>
+                </div>
+                <div className="p-3 bg-[#F4FAFF] rounded-2xl border border-[#E0F0FE] text-center">
                   <ShieldCheck className="w-4 h-4 text-[#168BFF] mx-auto mb-1" />
                   <div className="text-[11px] text-[#64748B]">Guides</div>
                   <div className="text-xs font-semibold text-[#101827]">Certified Local Expert</div>
-                </div>
-                <div className="p-3 bg-[#F4FAFF] rounded-2xl border border-[#E0F0FE] text-center">
-                  <Users className="w-4 h-4 text-[#168BFF] mx-auto mb-1" />
-                  <div className="text-[11px] text-[#64748B]">Group Type</div>
-                  <div className="text-xs font-semibold text-[#101827]">Private / Custom</div>
                 </div>
                 <div className="p-3 bg-[#F4FAFF] rounded-2xl border border-[#E0F0FE] text-center">
                   <Star className="w-4 h-4 text-[#168BFF] mx-auto mb-1" />

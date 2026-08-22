@@ -22,9 +22,9 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     category: ['Heritage', 'Culture' as any, 'Romantic' as any],
     heroImage: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1568849676085-51415703900f?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'The Venice of the East & City of Lakes',
     description: 'Surrounded by the serene Aravalli Hills and shimmering waters of Lake Pichola, Udaipur offers palaces, sunset boat rides, and Rajput architectural marvels.',
@@ -43,20 +43,20 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     region: 'Rajasthan',
     state: 'Rajasthan',
     category: ['Heritage', 'Culture' as any, 'Food'],
-    heroImage: 'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=1200&auto=format&fit=crop',
+    heroImage: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1477587458883-47145ed94245?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'The Pink City of Forts, Palaces & Bazaars',
     description: 'The vibrant capital of Rajasthan, blending royal grandiosity with bustling spice markets, gem craft, and historic hilltop fortresses.',
-    startingPrice: 10800,
+    startingPrice: 6999,
     durationDays: 3,
     durationNights: 2,
     highlights: ['Amber Fort Elephant Walk', 'Hawa Mahal Viewpoint', 'City Palace & Jantar Mantar', 'Johari Bazaar Jewellery'],
     bestSeason: 'Oct – Mar',
-    rating: 4.8,
+    rating: 4.9,
     reviewCount: 420,
     popularFor: 'Palaces · Bazaars · Street Food'
   },
@@ -68,8 +68,9 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     category: ['Heritage', 'Culture' as any],
     heroImage: 'https://images.unsplash.com/photo-1568849676085-51415703900f?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1568849676085-51415703900f?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1568849676085-51415703900f?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'The Sun City & The Blue City of Marwar',
     description: 'Guarded by the colossal Mehrangarh Fort towering above an azure sea of houses, Jodhpur is the heart of desert craftsmanship and spicy delicacies.',
@@ -90,8 +91,9 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     category: ['Mountains', 'Nature'],
     heroImage: 'https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1598091383021-15ddea10925d?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1598091383021-15ddea10925d?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'Paradise on Earth with Pine Forests & Shikaras',
     description: 'Gliding across Dal Lake on wooden shikaras, snow-draped alpine meadows of Gulmarg, and quiet saffron fields of Pampore.',
@@ -110,10 +112,11 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     region: 'South India',
     state: 'Kerala',
     category: ['Nature', 'Slow Escape' as any],
-    heroImage: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1200&auto=format&fit=crop',
+    heroImage: '/images/kerala_houseboat.jpg',
     galleryImages: [
-      'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=80&w=800&auto=format&fit=crop'
+      '/images/kerala_houseboat.jpg',
+      '/images/kerala_munnar.jpg',
+      '/images/kerala_bg.jpg'
     ],
     tagline: "God's Own Country of Coconut Groves & Lagoons",
     description: 'Drift along slow tranquil canals on a traditional kettuvallam, wake up to kingfishers, and savor spiced banana leaf meals.',
@@ -134,8 +137,9 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     category: ['Beaches', 'Food', 'Adventure'],
     heroImage: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1587922546307-776227941871?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1587922546307-776227941871?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'Sun-drenched Coastline, Portuguese Quarters & Susegad',
     description: 'Golden sand beaches, pastel colonial villas in Fontainhas, fresh prawn curry, and vibrant seaside cafe culture.',
@@ -156,7 +160,9 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     category: ['Mountains', 'Adventure'],
     heroImage: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'Apple Orchards & High Mountain Passes',
     description: 'Nestled on the banks of Beas River with views of the Solang Valley and gateway to the rugged Spiti and Ladakh trails.',
@@ -177,7 +183,9 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     category: ['Nature', 'Food'],
     heroImage: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'The Scotland of India & Coffee Country',
     description: 'Misty hills, aromatic Arabica coffee plantations, waterfalls, and mouthwatering Kodava cuisine including Pandi Curry.',
@@ -196,20 +204,68 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     region: 'North India',
     state: 'Uttar Pradesh',
     category: ['Spiritual', 'Heritage', 'Culture' as any],
-    heroImage: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?q=80&w=1200&auto=format&fit=crop',
+    heroImage: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1571536802807-30451e3955d8?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1561359313-0639aad49ca6?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'The Eternal Spiritual City on the Holy Ganga',
     description: 'One of the world’s oldest continuously inhabited cities, alive with evening Ganga Aarti, sunrise boat oars, and timeless alleyways.',
-    startingPrice: 7500,
-    durationDays: 2,
+    startingPrice: 5499,
+    durationDays: 3,
     durationNights: 2,
     highlights: ['Dashashwamedh Ghat Evening Aarti', 'Dawn Wooden Boat Ride on Ganga', 'Kashi Vishwanath Corridor', 'Banarasi Silk Weaving Trail'],
     bestSeason: 'Oct – Mar',
-    rating: 4.9,
+    rating: 4.97,
     reviewCount: 460,
     popularFor: 'Ghats · Ganga Aarti · Silk'
+  },
+  {
+    id: 'hampi',
+    name: 'Hampi',
+    region: 'South India',
+    state: 'Karnataka',
+    category: ['Heritage', 'Culture' as any],
+    heroImage: 'https://images.unsplash.com/photo-1620766182966-c6eb5ed2b788?q=80&w=1200&auto=format&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1620766182966-c6eb5ed2b788?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1596423735880-5f2a689b90b8?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?q=80&w=1200&auto=format&fit=crop'
+    ],
+    tagline: 'Lost Imperial Capital & Famous Stone Chariot',
+    description: 'UNESCO World Heritage ruins of Vijayanagara empire amidst surreal granite boulders, musical temple pillars, and coracle river safaris.',
+    startingPrice: 6299,
+    durationDays: 3,
+    durationNights: 2,
+    highlights: ['Vijaya Vittala Stone Chariot', 'Virupaksha Active Temple Complex', 'Coracle Boat Ride on Tungabhadra', 'Matanga Hill Sunset'],
+    bestSeason: 'Oct – Mar',
+    rating: 4.91,
+    reviewCount: 380,
+    popularFor: 'Stone Chariot · Ancient Ruins · Boulders'
+  },
+  {
+    id: 'amritsar',
+    name: 'Amritsar',
+    region: 'North India',
+    state: 'Punjab',
+    category: ['Spiritual', 'Heritage', 'Food'],
+    heroImage: 'https://images.unsplash.com/photo-1514222134-b57cbb8ce073?q=80&w=1200&auto=format&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1514222134-b57cbb8ce073?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1597040663342-45b6af2b21ca?q=80&w=1200&auto=format&fit=crop'
+    ],
+    tagline: 'Golden Temple of Amritsar & Patriotic Wagah Border',
+    description: 'Sri Harmandir Sahib gleaming over the holy Amrit Sarovar, 24/7 free community Langar, Wagah border ceremony, and crispy Amritsari Kulcha.',
+    startingPrice: 4999,
+    durationDays: 2,
+    durationNights: 1,
+    highlights: ['Golden Temple Holy Sarovar', 'Langar Seva Kitchen', 'Wagah Border Sunset Parade', 'Heritage Street Food Trail'],
+    bestSeason: 'Oct – Mar',
+    rating: 4.98,
+    reviewCount: 520,
+    popularFor: 'Golden Temple · Wagah Border · Punjabi Cuisine'
   },
   {
     id: 'ooty',
@@ -219,7 +275,9 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     category: ['Mountains', 'Nature'],
     heroImage: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'Queen of Hill Stations & UNESCO Toy Train',
     description: 'Chilly eucalyptus breeze, sprawling tea gardens, heritage colonial cottages, and the historic Nilgiri Mountain Railway.',
@@ -238,9 +296,11 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     region: 'North India',
     state: 'Ladakh',
     category: ['Mountains', 'Adventure', 'Spiritual'],
-    heroImage: 'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?q=80&w=1200&auto=format&fit=crop',
+    heroImage: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'High Altitude Desert, Monasteries & Pangong Tso',
     description: 'Dramatic moonscape mountains, prayer flags fluttering in mountain passes, and the deep turquoise brilliance of Pangong Lake.',
@@ -261,11 +321,13 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     category: ['Heritage'],
     heroImage: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=1200&auto=format&fit=crop',
     galleryImages: [
-      'https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=1200&auto=format&fit=crop'
     ],
     tagline: 'The Monumental City of Mughal Splendor & Taj Mahal',
     description: 'Home to the iconic white marble Taj Mahal, Agra Fort, and rich Mughlai culinary tradition.',
-    startingPrice: 6500,
+    startingPrice: 4499,
     durationDays: 2,
     durationNights: 1,
     highlights: ['Sunrise at Taj Mahal', 'Agra Fort Guided Walk', 'Mehtab Bagh Sunset View', 'Famous Agra Petha Tasting'],
@@ -273,5 +335,28 @@ export const INDIAN_DESTINATIONS: Destination[] = [
     rating: 4.8,
     reviewCount: 680,
     popularFor: 'Taj Mahal · Mughal History · Marble Craft'
+  },
+  {
+    id: 'somnath',
+    name: 'Somnath & Coastal Gujarat',
+    region: 'West',
+    state: 'Gujarat',
+    category: ['Spiritual', 'Heritage', 'Beaches'],
+    heroImage: '/images/gujarat_somnath_bg.jpg',
+    galleryImages: [
+      '/images/gujarat_somnath_card.jpg',
+      '/images/gujarat_somnath_bg.jpg',
+      '/images/gujarat_statue_of_unity.jpg'
+    ],
+    tagline: 'First Jyotirlinga on the Arabian Shoreline',
+    description: 'The sacred shore temple of Somnath rising with majestic stone spires against the Arabian Sea waves, complemented by Triveni Sangam and nearby Gir sanctuary.',
+    startingPrice: 5499,
+    durationDays: 3,
+    durationNights: 2,
+    highlights: ['Somnath Temple Evening Aarti', 'Arabian Sea Shore Walk', 'Triveni Sangam Holy Dip', 'Sound & Light Laser Show'],
+    bestSeason: 'Oct – Mar',
+    rating: 4.9,
+    reviewCount: 310,
+    popularFor: 'Shore Temple · Arabian Sea · Spiritual'
   }
 ];

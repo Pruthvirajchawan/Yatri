@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, MapPin, Calendar, Star, Sparkles, Heart, Check, ArrowRight } from 'lucide-react';
 import { Destination } from '../../types';
@@ -15,10 +15,14 @@ export const DestinationDetailModal: React.FC<DestinationDetailModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const { savedDestinationIds, toggleSaveDestination } = useTrip();
+  const [selectedPhoto, setSelectedPhoto] = useState<number>(0);
 
   if (!destination) return null;
 
   const isSaved = savedDestinationIds.includes(destination.id);
+  const photos = destination.galleryImages && destination.galleryImages.length > 0
+    ? destination.galleryImages
+    : [destination.heroImage];
 
   const handlePlanThis = () => {
     onClose();
@@ -37,9 +41,10 @@ export const DestinationDetailModal: React.FC<DestinationDetailModalProps> = ({
         {/* Header Image Gallery */}
         <div className="relative h-64 sm:h-72 w-full bg-[#101827] shrink-0">
           <img
-            src={destination.heroImage}
+            src={photos[selectedPhoto] || destination.heroImage}
             alt={destination.name}
-            className="w-full h-full object-cover"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover transition-all duration-300"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
@@ -86,6 +91,25 @@ export const DestinationDetailModal: React.FC<DestinationDetailModalProps> = ({
             </p>
           </div>
         </div>
+
+        {/* 3 Photos Gallery Thumbnails */}
+        {photos.length > 1 && (
+          <div className="px-6 pt-3 pb-1 flex gap-2 overflow-x-auto bg-[#F8FAFC] border-b border-[#E8EEF5]">
+            {photos.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSelectedPhoto(idx)}
+                className={`relative w-20 h-14 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                  selectedPhoto === idx
+                    ? 'border-[#168BFF] scale-105 shadow-md'
+                    : 'border-transparent opacity-65 hover:opacity-100'
+                }`}
+              >
+                <img src={img} alt={`${destination.name} view ${idx + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Modal Body Content */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">

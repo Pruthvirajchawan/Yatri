@@ -38,7 +38,7 @@ export const Discover: React.FC = () => {
       }
 
       // Category filter
-      if (selectedCategory !== 'All' && !dest.category.includes(selectedCategory)) {
+      if (selectedCategory !== 'All' && !dest.category.includes(selectedCategory as any)) {
         return false;
       }
 

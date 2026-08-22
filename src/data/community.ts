@@ -9,7 +9,7 @@ export const COMMUNITY_STORIES: CommunityStory[] = [
     duration: '7 Days',
     budget: '₹29,500 / person',
     style: 'Balanced Culture',
-    image: 'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=800&auto=format&fit=crop',
     summary: 'We swapped rushed 5-city tours for 3 nights in Jaipur and 4 in Jodhpur. The Yatri Experience Budget saved us from burning out on Day 4!',
     likesCount: 384,
     route: ['Jaipur', 'Amber', 'Jodhpur', 'Mehrangarh']

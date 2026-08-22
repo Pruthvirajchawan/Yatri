@@ -10,6 +10,7 @@ interface CapsuleDestination {
   image: string;
   tag: string;
   price: number;
+  objectPosition?: string;
 }
 
 const CAPSULES: CapsuleDestination[] = [
@@ -19,32 +20,36 @@ const CAPSULES: CapsuleDestination[] = [
     subtitle: 'Pangong Tso & High Passes',
     image: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=800&auto=format&fit=crop',
     tag: 'High Altitude & Lakes',
-    price: 24999
+    price: 16999,
+    objectPosition: 'object-center'
   },
   {
-    id: 'kashmir',
-    name: 'Kashmir',
-    subtitle: 'Heaven on Earth & Snow Peaks',
-    image: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?q=80&w=800&auto=format&fit=crop',
-    tag: 'Gulmarg & Valleys',
-    price: 18499
+    id: 'gujarat',
+    name: 'Gujarat',
+    subtitle: 'Somnath Temple & Sacred Coast',
+    image: '/images/gujarat_somnath_card.jpg',
+    tag: 'Sacred Heritage & Coast',
+    price: 9499,
+    objectPosition: 'object-center'
   },
   {
-    id: 'spiti',
-    name: 'Spiti',
-    subtitle: 'Cold Desert & Cliff Gompas',
-    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop',
-    tag: 'Trans-Himalaya',
-    price: 16999
+    id: 'kerala',
+    name: 'Kerala',
+    subtitle: 'Alleppey Backwaters & Munnar Hills',
+    image: '/images/kerala_card.jpg',
+    tag: "God's Own Country",
+    price: 11999,
+    objectPosition: 'object-center'
   }
 ];
 
 interface ThreeDCapsuleCardsProps {
   onSelect?: (destinationId: string) => void;
+  onHoverChange?: (destinationId: string | null) => void;
   compact?: boolean;
 }
 
-export const ThreeDCapsuleCards: React.FC<ThreeDCapsuleCardsProps> = ({ onSelect, compact = false }) => {
+export const ThreeDCapsuleCards: React.FC<ThreeDCapsuleCardsProps> = ({ onSelect, onHoverChange, compact = false }) => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -58,6 +63,9 @@ export const ThreeDCapsuleCards: React.FC<ThreeDCapsuleCardsProps> = ({ onSelect
   const handleMouseLeave = () => {
     setHoveredId(null);
     setMousePos({ x: 0, y: 0 });
+    if (onHoverChange) {
+      onHoverChange(null);
+    }
   };
 
   return (
@@ -93,7 +101,10 @@ export const ThreeDCapsuleCards: React.FC<ThreeDCapsuleCardsProps> = ({ onSelect
             <motion.div
               key={item.id}
               onClick={() => onSelect && onSelect(item.id)}
-              onMouseEnter={() => setHoveredId(item.id)}
+              onMouseEnter={() => {
+                setHoveredId(item.id);
+                if (onHoverChange) onHoverChange(item.id);
+              }}
               animate={{
                 rotateY,
                 rotateX,
@@ -125,7 +136,7 @@ export const ThreeDCapsuleCards: React.FC<ThreeDCapsuleCardsProps> = ({ onSelect
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-115 filter brightness-[0.92] contrast-[1.05]"
+                    className={`w-full h-full object-cover ${item.objectPosition || 'object-center'} transition-transform duration-700 ease-out group-hover:scale-115 filter brightness-[0.95] contrast-[1.05]`}
                   />
 
                   {/* Gradient Vignette & Lighting */}

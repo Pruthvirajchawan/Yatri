@@ -72,7 +72,7 @@ export const Planner: React.FC = () => {
         travelStyle,
         coverImage:
           INDIAN_DESTINATIONS.find((d) => selectedDestination.includes(d.name))?.heroImage ||
-          'https://images.unsplash.com/photo-1603262110263-fb010d6e75dc?q=80&w=1200&auto=format&fit=crop'
+          'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1200&auto=format&fit=crop'
       });
 
       navigate(`/trip/${newTrip.id}`);

@@ -3,7 +3,7 @@ import { UserProfile } from '../types';
 export const CURRENT_USER_PROFILE: UserProfile = {
   name: 'Pruthviraj Chawan',
   email: 'pruthvirajchawan65@gmail.com',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
+  avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
   location: 'Bengaluru, India',
   memberSince: 'March 2025',
   totalTripsCount: 6,

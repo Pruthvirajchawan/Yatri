@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import { TripProvider } from './context/TripContext';
 import { Navbar } from './components/navigation/Navbar';
 import { Footer } from './components/navigation/Footer';
+import { AuthModal } from './components/common/AuthModal';
 
 // Pages
 import { Home } from './pages/Home';
@@ -31,43 +33,46 @@ const ScrollToTop: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <TripProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="flex flex-col min-h-screen selection:bg-[#168BFF] selection:text-white">
-          <Navbar />
-          <main className="flex-grow">
-            <Routes>
-              {/* Home Landing */}
-              <Route path="/" element={<Home />} />
+    <AuthProvider>
+      <TripProvider>
+        <Router>
+          <ScrollToTop />
+          <div className="flex flex-col min-h-screen selection:bg-[#168BFF] selection:text-white">
+            <Navbar />
+            <main className="flex-grow">
+              <Routes>
+                {/* Home Landing */}
+                <Route path="/" element={<Home />} />
 
-              {/* Destination Discovery */}
-              <Route path="/discover" element={<Discover />} />
+                {/* Destination Discovery */}
+                <Route path="/discover" element={<Discover />} />
 
-              {/* Intelligent Planner */}
-              <Route path="/plan" element={<Planner />} />
+                {/* Intelligent Planner */}
+                <Route path="/plan" element={<Planner />} />
 
-              {/* Active Trip & Intelligence Routes */}
-              <Route path="/trip/:id" element={<ItineraryView />} />
-              <Route path="/trip/:id/intelligence" element={<TripIntelligence />} />
-              <Route path="/trip/:id/tradeoffs" element={<TradeOffEngine />} />
-              <Route path="/trip/:id/group" element={<GroupEquityView />} />
-              <Route path="/trip/:id/budget" element={<BudgetIntelligence />} />
+                {/* Active Trip & Intelligence Routes */}
+                <Route path="/trip/:id" element={<ItineraryView />} />
+                <Route path="/trip/:id/intelligence" element={<TripIntelligence />} />
+                <Route path="/trip/:id/tradeoffs" element={<TradeOffEngine />} />
+                <Route path="/trip/:id/group" element={<GroupEquityView />} />
+                <Route path="/trip/:id/budget" element={<BudgetIntelligence />} />
 
-              {/* Portfolio & Additional Features */}
-              <Route path="/my-trips" element={<MyTrips />} />
-              <Route path="/assistant" element={<AiAssistant />} />
-              <Route path="/community" element={<Community />} />
-              <Route path="/profile" element={<Profile />} />
+                {/* Portfolio & Additional Features */}
+                <Route path="/my-trips" element={<MyTrips />} />
+                <Route path="/assistant" element={<AiAssistant />} />
+                <Route path="/community" element={<Community />} />
+                <Route path="/profile" element={<Profile />} />
 
-              {/* Fallback */}
-              <Route path="*" element={<Home />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
-    </TripProvider>
+                {/* Fallback */}
+                <Route path="*" element={<Home />} />
+              </Routes>
+            </main>
+            <Footer />
+            <AuthModal />
+          </div>
+        </Router>
+      </TripProvider>
+    </AuthProvider>
   );
 };
 

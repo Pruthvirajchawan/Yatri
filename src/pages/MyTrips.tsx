@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Heart, Calendar, Compass, Sparkles, Layers, Trash2 } from 'lucide-react';
+import { Plus, Heart, Calendar, Compass, Sparkles, Layers, Trash2, Cloud, ShieldCheck, LogIn } from 'lucide-react';
 import { useTrip } from '../context/TripContext';
+import { useAuth } from '../context/AuthContext';
 import { TripCard } from '../components/cards/TripCard';
 import { DestinationCard } from '../components/cards/DestinationCard';
 import { DestinationDetailModal } from '../components/common/DestinationDetailModal';
@@ -11,6 +12,7 @@ import { Trip, Destination } from '../types';
 
 export const MyTrips: React.FC = () => {
   const { trips, deleteTrip, savedDestinationIds, currentTrip } = useTrip();
+  const { user, openAuthModal } = useAuth();
   const [activeTab, setActiveTab] = useState<'all' | 'saved-destinations'>('all');
   const [sharingTrip, setSharingTrip] = useState<Trip | null>(null);
   const [selectedDestination, setSelectedDestination] = useState<Destination | null>(null);
@@ -28,6 +30,11 @@ export const MyTrips: React.FC = () => {
             <div className="flex items-center gap-2 text-xs font-semibold text-[#168BFF] uppercase tracking-wider mb-1">
               <Layers className="w-3.5 h-3.5" />
               <span>Your Travel Portfolio</span>
+              <span className="text-[#94A3B8]">·</span>
+              <span className="flex items-center gap-1 text-emerald-600 font-bold lowercase first-letter:uppercase">
+                <Cloud className="w-3 h-3" />
+                {user ? 'Firestore synced' : 'Local drafts'}
+              </span>
             </div>
             <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#101827]">
               My Yatris & Saved Journeys
@@ -37,13 +44,24 @@ export const MyTrips: React.FC = () => {
             </p>
           </div>
 
-          <Link
-            to="/plan"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[#101827] hover:bg-[#168BFF] text-white text-xs sm:text-sm font-semibold rounded-full shadow-md transition-all self-start sm:self-auto cursor-pointer hover:scale-105"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Create New Trip</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            {!user && (
+              <button
+                onClick={() => openAuthModal('login')}
+                className="inline-flex items-center gap-2 px-5 py-3 bg-white hover:bg-[#F8FAFC] text-[#101827] border border-[#D9E2EC] text-xs sm:text-sm font-semibold rounded-full shadow-xs transition-all cursor-pointer"
+              >
+                <LogIn className="w-4 h-4 text-[#FF5E1E]" />
+                <span>Sign In to Sync</span>
+              </button>
+            )}
+            <Link
+              to="/plan"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#101827] hover:bg-[#168BFF] text-white text-xs sm:text-sm font-semibold rounded-full shadow-md transition-all self-start sm:self-auto cursor-pointer hover:scale-105"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Create New Trip</span>
+            </Link>
+          </div>
         </div>
 
         {/* Tab Switcher */}

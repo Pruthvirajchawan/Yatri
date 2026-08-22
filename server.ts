@@ -1,6 +1,7 @@
+import 'dotenv/config';
 import express from 'express';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
+import fs from 'fs';
 import { tripsRouter } from './server/routes/trips';
 import { destinationsRouter } from './server/routes/destinations';
 import { bookingsRouter } from './server/routes/bookings';
@@ -26,7 +27,7 @@ async function startServer() {
     next();
   });
 
-  // Health Endpoint
+  // Health Endpoint for Cloud Run readiness and liveness probes
   app.get('/api/health', (req, res) => {
     res.json({
       status: 'ok',
@@ -67,18 +68,37 @@ async function startServer() {
     });
   });
 
-  // Vite middleware for development vs static build for production
-  if (process.env.NODE_ENV !== 'production') {
+  // Determine if running in local development mode or containerized/production mode
+  const isDev =
+    process.env.NODE_ENV !== 'production' &&
+    !process.env.K_SERVICE &&
+    !process.argv[1]?.endsWith('.cjs') &&
+    !process.argv[1]?.includes('dist');
+
+  if (isDev) {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    // Robust path resolution for Cloud Run container
+    const candidatePaths = [
+      path.join(process.cwd(), 'dist'),
+      process.cwd()
+    ];
+    const distPath = candidatePaths.find(p => fs.existsSync(path.join(p, 'index.html'))) || path.join(process.cwd(), 'dist');
+
+    app.use(express.static(distPath, { maxAge: '1d', index: 'index.html' }));
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      const indexPath = path.join(distPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        // Fallback for health checks if index.html is missing
+        res.status(200).send('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Yatri</title></head><body><div id="root"></div></body></html>');
+      }
     });
   }
 
