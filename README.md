@@ -1,4 +1,4 @@
-# GlobeTrotter
+# YATRI
 
 An intelligent travel planning platform designed around realistic, personalized and collaborative trip decisions.
 
@@ -21,7 +21,7 @@ The fundamental issue is not simply creating an itinerary. The deeper challenge 
 
 ### 2. Vision
 
-GlobeTrotter aims to help travelers understand the trade-offs behind every trip decision and continuously refine their plan into its most realistic, enjoyable version.
+Yatri aims to help travelers understand the trade-offs behind every trip decision and continuously refine their plan into its most realistic, enjoyable version.
 
 ---
 
