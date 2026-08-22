@@ -1,5 +1,7 @@
 # 🧭 Yatri — Intelligent Travel Planning Platform
 
+Deployed Application Link : https://yatri-26337394549.asia-southeast1.run.app
+
 > Plan smarter. Travel better. Understand every decision.
 
 Yatri is a full-stack intelligent travel planning platform designed to help users discover destinations, build personalized itineraries, manage trips, understand travel budgets, and make better travel decisions using AI-powered intelligence.
