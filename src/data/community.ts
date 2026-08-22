@@ -13,6 +13,7 @@ export const COMMUNITY_STORIES: CommunityStory[] = [
     summary: 'We swapped rushed 5-city tours for 3 nights in Jaipur and 4 in Jodhpur. The Yatri Experience Budget saved us from burning out on Day 4!',
     likesCount: 384,
     route: ['Jaipur', 'Amber', 'Jodhpur', 'Mehrangarh']
+
   },
   {
     id: 'story-2',
@@ -26,6 +27,7 @@ export const COMMUNITY_STORIES: CommunityStory[] = [
     summary: 'Taking a slow overnight kettuvallam and booking private tea estate bungalows made this our most restorative holiday yet.',
     likesCount: 512,
     route: ['Kochi', 'Alleppey', 'Munnar']
+    
   },
   {
     id: 'story-3',
