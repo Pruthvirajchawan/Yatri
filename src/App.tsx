@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./screens/Dashboard";
+import ItineraryBuilder from "./screens/ItineraryBuilder";
 import CitySearch from "./screens/CitySearch";
 
 export default function App() {
@@ -18,6 +19,8 @@ export default function App() {
       case "dashboard":
       default:
         return <Dashboard onNavigate={handleNavigate} />;
+      case "builder":
+  return <ItineraryBuilder onNavigate={handleNavigate} />;
     }
   };
 

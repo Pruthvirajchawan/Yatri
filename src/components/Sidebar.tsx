@@ -16,6 +16,7 @@ interface SidebarProps {
 
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: Map },
+  { id: "builder", label: "Itinerary Builder", icon: Map },
   { id: "trips", label: "My Trips", icon: Map },
   { id: "create", label: "Plan New Trip", icon: Plus },
   { id: "cities", label: "City Search", icon: Search },
