@@ -1,6 +1,6 @@
 {
   "name": "GlobeTrotter",
-  "description": "An intelligent travel planning platform designed around realistic, personalized and collaborative trip decisions.",
+  "description": "Yatri - Discover the wild beauty and majestic mountains of India with 3D curated destination cards, authentic Himalayan experiences, and interactive trip planning in INR (₹).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
