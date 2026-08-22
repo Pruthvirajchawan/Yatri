@@ -245,12 +245,6 @@ npm install react-router-dom
 npm run dev
 ```
 
-Open:
-
-```text
-http://localhost:5173
-```
-
 ## Production Build
 
 ```bash
